@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div id="login-beam-container">
+		<div id="login-beam">
+			<form action="/login/{% if next %}?next={{ next }}{% endif %}" method="post">
+				{% csrf_token %}
+				{{ form.as_p }}
+				<input type="submit" value="Log In" />
+			</form>
+			<br style="clear: both;" />
+			<p>
+				No account yet? <a href="/register/">Register!</a>
+			</p>
+		</div>
+	</div>
+{% endblock %}

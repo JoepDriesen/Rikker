@@ -1,0 +1,45 @@
+{% load static player_ordering %}
+
+			{% for isplaying in game.isplaying_set.all %}
+				<div id="player{% seat_number game isplaying user %}" class="player">
+				
+					<div class="player-centerer">
+						<h3>
+							{{ isplaying.player.username }}
+							{% if game.current_round.dealer == isplaying.player %}<img class="role-img" title="This player is the dealer" src="/static/img/dealer_button.png" />{% endif %}
+							{% if game.current_round.playing and game.current_round.next_player_to_play == isplaying.player and isplaying.player != user %} (It's this players turn){% endif %}
+							{% if game.current_round.highest_bid.player == isplaying.player %}<img class="role-img" title="This player made the highest bid" src="/static/img/star.png" />{% endif %}
+							{% if game.current_round.mate == isplaying.player and game.current_round.mate_card_played %}<img class="role-img" title="This player is the mate" src="/static/img/mate.png" />{% endif %}
+							<p class="score">Points: {{ isplaying.score }}</p>
+						</h3>
+						{% if game.current_round.highest_bid != None and isplaying.current_tricks != None %}<p class="player-tricks">Tricks won: {{ isplaying.current_tricks }}</p>{% endif %}
+						{% if game.current_round != None and game.current_round.highest_bid == None %}
+							<p class="current-bid">Current Bid: {{ isplaying.last_bid|default_if_none:"No bid placed yet." }}</p>
+						{% endif %}
+						{% if game.current_round != None and game.current_round.playing and game.current_round.next_player_to_play == user and isplaying.player == user %}
+							<p><b>It's your turn, please pick a card to play</b></p>
+						{% endif %}
+						{% if game.current_round != None %}
+							<div class="player-cards">
+								{% for card in isplaying.cards.all %}
+									{% if isplaying.player == user %}
+										{% if game.current_round != None and game.current_round.playing and game.current_round.next_player_to_play == user and isplaying.player == user %}
+											<a href="{% url 'play_card' game.id card.identifier %}">
+												<img src="{% static card.image_file %}" />
+											</a>
+										{% else %}
+											<img src="{% static card.image_file %}" />
+										{% endif %}
+									{% else %}
+										<div class="card-back"></div>
+									{% endif %}
+								{% empty %}
+									{% if isplaying.player == user %}
+										<p>You don't have any cards left...</p>
+									{% endif %}
+								{% endfor %}
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			{% endfor %}

@@ -1,0 +1,81 @@
+{% load static player_ordering %}
+
+					{% if game.current_round == None %}
+						<a href="{% url 'start_round' game.id %}">Start next round</a>
+						
+					{% elif game.current_round.highest_bid == None %}
+						{% if game.current_round.temp_highest_bid == None %}
+							<p>No bids have been placed yet</p>
+						{% else %}
+							<p>Highest bid: {{ game.current_round.temp_highest_bid }}</p>
+						{% endif %}
+					
+						{% if bid_form %}
+							<p>Please place your bid:</p>
+							<form id="bidding-form" action="{% url 'place_bid' game.id %}" method="POST">
+								{% csrf_token %}
+								{{ bid_form.bid }}
+								<input type=submit value="Place bid" />
+							</form>
+						{% else %}
+							<p>Waiting for {{ game.current_round.next_player_to_bid.username }} to place a bid</p>
+						{% endif %}
+						
+					{% elif not game.current_round.playing %}
+						{% if trump_and_mate_form %}
+							<p>
+								Please pick a trump suit and a mate card
+							</p>
+							<form action="{% url 'pick_trump_and_mate' game.id %}" method="POST">
+								{% csrf_token %}
+								{{ trump_and_mate_form.as_p }}
+								<input type="submit" value="Pick" />
+							</form>
+						{% elif trump_form %}
+							<form action="{% url 'pick_trump' game.id %}" method="POST">
+								{% csrf_token %}
+								{{ trump_form }}
+								<input type="submit" value="Pick" />
+							</form>
+						{% else %}
+							<p>Waiting for {{ game.current_round.highest_bid.player.username }} to pick the Trump suit (and a Mate if applicable)</p>
+						{% endif %}
+						
+					{% else %}						
+						{% if game.current_round.current_trick %}
+							{% current_trick_display game user %}
+							
+							{% if game.current_round.current_trick.is_done %}
+								{% if game.current_round.current_trick.winner == user %}
+									<div style="position: absolute; top: -55px; width: 100%; text-align: center;">
+										<h3 style="margin: 0">You won this trick:</h3>
+										<a href="{% url 'collect_trick' game.id %}">Click here to collect your trick.</a>
+									</div>
+								{% else %}
+									<div style="position: absolute; top: -55px; width: 100%; text-align: center;">
+										<h3 style="margin: 0">{{ game.current_round.current_trick.winner.username }} won this trick:</h3>
+										Please wait for him to collect his trick.
+									</div>
+								{% endif %}
+							{% endif %}
+						{% endif %}
+					{% endif %}
+					
+					
+					{% if game.current_round.tricks_played >= 13 %}
+						<div style="position:relative; top: -60px;">
+							<h3>Round number {{ game.round_number }} is finished.</h3>
+							<p>Here are the results:</p>
+							<p>
+								{{ game.current_round.highest_bid.player }} did a '{{ game.current_round.highest_bid.get_bid_display }}'
+								{% if game.current_round.mate != None %} and his mate was {{ game.current_round.mate }}.{% endif %}
+								<br />
+								{% if game.current_round.mate != None %}Together they{% else %}He/She{% endif %} got {{ game.current_round.asking_team_tricks }} tricks.
+								{% if game.current_round.asking_team_won %}That means {% if game.current_round.mate != None %}they{% else %}he/she{% endif %} won!{% else %}That means {% if game.current_round.mate != None %}they{% else %}he/she{% endif %} lost.{% endif %}
+								<br />
+								{% if game.current_round.mate != None %}They each get{% else %}He/She gets{% endif %} {{ game.current_round.asking_team_points }} points and the other players get {{ game.current_round.other_player_points }} points.
+								
+							</p>
+							<a href="{% url 'start_round' game.id %}">Start next round</a>
+						</div>
+					{% endif %}
