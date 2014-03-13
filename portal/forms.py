@@ -1,12 +1,27 @@
 from django import forms
 from portal.models import Bid
 from django.contrib.auth import get_user_model
+from portal import LazyModelChoiceField
 
 class StartGameForm(forms.Form):
     
-    player1 = forms.ModelChoiceField(queryset=get_user_model().objects.exclude(is_bot=True), required=False)
-    player2 = forms.ModelChoiceField(queryset=get_user_model().objects.exclude(is_bot=True), required=False)
-    player3 = forms.ModelChoiceField(queryset=get_user_model().objects.exclude(is_bot=True), required=False)
+    player1 = LazyModelChoiceField(queryset=None, required=False)
+    player2 = LazyModelChoiceField(queryset=None, required=False)
+    player3 = LazyModelChoiceField(queryset=None, required=False)
+    
+    def __init__(self, *args, **kwargs):
+        """
+        To make sure the queryset is only evaluated once for every instance of the form, but updated every time
+        a new instance is created
+        
+        """        
+        all_users_no_bots = get_user_model().objects.exclude(is_bot=True)
+    
+        self.base_fields['player1'].queryset = all_users_no_bots
+        self.base_fields['player2'].queryset = all_users_no_bots
+        self.base_fields['player3'].queryset = all_users_no_bots
+        
+        return super(StartGameForm, self).__init__(*args, **kwargs)
     
     def get_players_to_invite(self):
         players = []

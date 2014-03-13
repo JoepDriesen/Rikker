@@ -12,13 +12,19 @@
 							{% if game.current_round.mate == isplaying.player and game.current_round.mate_card_played %}<img class="role-img" title="This player is the mate" src="/static/img/mate.png" />{% endif %}
 							<p class="score">Points: {{ isplaying.score }}</p>
 						</h3>
-						{% if game.current_round.highest_bid != None and isplaying.current_tricks != None %}<p class="player-tricks">Tricks won: {{ isplaying.current_tricks }}</p>{% endif %}
+						
+						{% if game.current_round.highest_bid != None and isplaying.current_tricks != None %}
+							<p class="player-tricks">Tricks won: {{ isplaying.current_tricks }}</p>
+						{% endif %}
+						
 						{% if game.current_round != None and game.current_round.highest_bid == None %}
 							<p class="current-bid">Current Bid: {{ isplaying.last_bid|default_if_none:"No bid placed yet." }}</p>
 						{% endif %}
+						
 						{% if game.current_round != None and game.current_round.playing and game.current_round.next_player_to_play == user and isplaying.player == user %}
 							<p><b>It's your turn, please pick a card to play</b></p>
 						{% endif %}
+						
 						{% if game.current_round != None %}
 							<div class="player-cards">
 								{% for card in isplaying.cards.all %}

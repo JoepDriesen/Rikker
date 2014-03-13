@@ -123,7 +123,7 @@ class Round(models.Model):
     
     def __unicode__(self):
         try:
-            return 'Round #%s of %s' % (self.game.round_number(), self.game)
+            return 'Round #%s of %s' % (self.game.round_number, self.game)
         except Game.DoesNotExist:
             return None
     
@@ -452,6 +452,7 @@ class Game(models.Model):
     deck_initialized = models.BooleanField(default=False)
     
     current_round = models.OneToOneField(Round, null=True, blank=True, default=None, related_name='game_current')
+    round_number = models.PositiveIntegerField(default=0, editable=False)
     
     def __unicode__(self):
         return 'Game #%s' % self.pk
@@ -467,9 +468,6 @@ class Game(models.Model):
             isplaying.needs_update = True;
             isplaying.save()
     
-    def round_number(self):
-        return self.rounds.count()
-    
     def everybody_accepted(self):
         for isplaying in self.isplaying_set.all():
             if not isplaying.accepted:
@@ -477,10 +475,10 @@ class Game(models.Model):
         return True
     
     def current_dealer(self):
-        if self.round_number() <= 0:
+        if self.round_number <= 0:
             return None
         ao_players = len(self.players.all())
-        dealer_seat = (self.round_number() - 1) % ao_players
+        dealer_seat = (self.round_number - 1) % ao_players
         
         return self.players.get(seat=dealer_seat)
     
@@ -490,7 +488,7 @@ class Game(models.Model):
         
         """
         ao_players = len(self.players.all())
-        dealer_seat = self.round_number() % ao_players
+        dealer_seat = self.round_number % ao_players
         
         return self.players.get(isplaying__seat=dealer_seat)
     
@@ -498,10 +496,12 @@ class Game(models.Model):
         self.deck.clear()
         
         card_no = 0
+        cards_in_deck = []
         for card in Card.objects.all().order_by('?'):
             isindeck = IsInDeck(card=card, game=self, ordinal=card_no)
-            isindeck.save()
+            cards_in_deck.append(isindeck)
             card_no += 1
+        IsInDeck.objects.bulk_create(cards_in_deck)
         self.deck_initialized = True
         self.deal_allowed = True
         self.save()
@@ -556,6 +556,7 @@ class Game(models.Model):
         self.changed()
     
     def save(self, *args, **kwargs):
+        self.round_number = self.rounds.count()
         self.changed()
         super(Game, self).save(*args, **kwargs)
         
@@ -583,10 +584,10 @@ class IsPlaying(models.Model):
         return '%s is playing in Game #%s' % (self.player.username, self.game.id)
     
     def last_bid(self):
-        try:
-            return self.game.current_round.bids.filter(player=self.player)[0]
-        except IndexError:
-            return None
+        for bid in self.game.current_round.bids.all():
+            if bid.player == self.player:
+                return bid
+        return None
     
     def current_tricks(self):
         if self.game.current_round is not None:

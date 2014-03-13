@@ -7,16 +7,28 @@ from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, Http404
 import json
 from django.template.loader import render_to_string
 
 @login_required
 def portal(request):
     start_game_form = StartGameForm()
-    pending_games = [isplaying.game for isplaying in IsPlaying.objects.filter(player=request.user, game__deck_initialized=False).exclude(accepted=False)]
-    invitations = [isplaying.game for isplaying in IsPlaying.objects.filter(player=request.user, accepted=False, abandoned=False)]
-    games = [isplaying.game for isplaying in IsPlaying.objects.filter(player=request.user, game__deck_initialized=True, abandoned=False)]
+    isplayings = IsPlaying.objects.select_related('game', 'player').prefetch_related('game__isplaying_set__player').filter(player=request.user)
+    
+    pending_games = []
+    invitations = []
+    games = []
+    
+    for isplaying in isplayings:
+        if isplaying.abandoned:
+            continue
+        elif not isplaying.accepted:
+            invitations.append(isplaying.game)
+        elif not isplaying.game.deck_initialized:
+            pending_games.append(isplaying.game)
+        else:
+            games.append(isplaying.game)
     
     return render(request, 'portal/portal.html', {'start_game_form': start_game_form,
                                                   'pending_games': pending_games,
@@ -76,7 +88,10 @@ def start_game(request, game_id):
 
 @login_required
 def game(request, game_id):
-    game = get_object_or_404(Game, id=game_id)
+    try:
+        game = Game.objects.select_related('current_round__dealer', 'current_round__next_player_to_bid', 'current_round__highest_bid__player', 'current_round__next_player_to_play').prefetch_related('isplaying_set__player', 'isplaying_set__cards', 'current_round__bids__player').get(id=game_id)
+    except Game.DoesNotExist:
+        raise Http404()
     args = {'game': game}
     if game.current_round is not None and game.current_round.next_player_to_bid == request.user:
         bid_form = MakeBidForm()
