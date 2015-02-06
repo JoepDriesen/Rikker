@@ -4,7 +4,7 @@ Rikker
 An online application allowing people to play the trick taking card game 'Rikken' against each other online.
 
 ##### Play the game
-You can play a current version of the game at [http://www.rikken.tk](www.rikken.tk)
+You can play a current version of the game at [www.rikken.tk](http://www.rikken.tk)
 
 #### Latest Release: Alpha (v0.1)
 
