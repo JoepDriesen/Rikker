@@ -1,17 +1,3 @@
 {% load static %}
 
-			{% if game.current_round != None and game.current_round.highest_bid != None and game.current_round.highest_bid.trump_suit != None and not game.current_round.tricks_played >= 13 %}
-				<div id="round-trump-display">
-					<p>Trump suite: {{ game.current_round.highest_bid.get_trump_suit_display }}</p>
-					<p>Mate card: {{ game.current_round.highest_bid.mate_card }} of {{ game.current_round.highest_bid.get_mate_suit_display }}</p>
-				</div>
-				
-				{% if game.current_round.previous_trick %}
-					<div style="position: absolute; right: 20px; top: 0px;">
-						<h3 style="margin: 0;">Previous trick:</h3>
-						{% for card in game.current_round.previous_trick.cards.all %}
-							<img src="{% static card.image_file %}" />
-						{% endfor %}
-					</div>
-				{% endif %}
-			{% endif %}
+			

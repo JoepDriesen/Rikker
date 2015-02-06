@@ -39,13 +39,11 @@ class MakeBidForm(forms.ModelForm):
         fields = ['bid']
 
 class PickTrumpSuitAndMateForm(forms.ModelForm):
-    # TODO: make all fields required
     class Meta:
         model = Bid
         fields = ['trump_suit', 'mate_suit']
 
 class PickTrumpSuitForm(forms.ModelForm):
-    # TODO: make all fields required
     class Meta:
         model = Bid
         fields = ['trump_suit']

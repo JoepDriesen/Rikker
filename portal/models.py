@@ -8,9 +8,12 @@ class CardManager(models.Manager):
     
     def get_by_identifier(self, card_identifier):
         suit_letter = card_identifier[0]
+        suit = None
         for possible_suit in Card.SUITS:
-            if possible_suit[1].startswith(suit_letter):
+            if Card.SUIT_MAP[possible_suit[1]] == suit_letter:
                 suit = possible_suit[0]
+        if suit is None:
+            raise Exception('Card identifier does not have a valid suit: {}'.format(card_identifier))
         number = int(card_identifier[1:])
         return self.get(suit=suit, number=number)
         
@@ -20,12 +23,18 @@ class Card(models.Model):
     
     """
     CLUBS, DIAMONDS, HEARTS, SPADES = 0, 1, 2, 3
-    SUITS = ((CLUBS, 'Clubs'), (DIAMONDS, 'Diamonds'), (HEARTS, 'Hearts'), (SPADES, 'Spades'))
+    SUITS = ((CLUBS, 'w'), (DIAMONDS, 'e'), (HEARTS, 'r'), (SPADES, 'q'))
+    SUIT_MAP = {'w': 'C', 'e': 'D', 'r': 'H', 'q': 'S'}
     
     objects = CardManager()
     
     class Meta:
         unique_together = (("number", "suit"), )
+        
+    @classmethod
+    def get_card_number_display(cls, card_number):
+        d = {10: '0', 11: 'a', 12: 's', 13: 'd'}
+        return d.get(card_number, card_number)
     
     number = models.PositiveSmallIntegerField()
     suit = models.PositiveSmallIntegerField(choices=SUITS)
@@ -39,7 +48,7 @@ class Card(models.Model):
         return '%s of %s' % (self.number, self.get_suit_display())
     
     def identifier(self):
-        return '%s%s' % (self.get_suit_display()[0], self.number)
+        return '%s%s' % (self.SUIT_MAP[self.get_suit_display()], self.number)
     
     def image_file(self):
         return 'img/cards/%s.png' % self.identifier()
@@ -70,6 +79,9 @@ class Bid(models.Model):
         if self.bid == self.PASS:
             return '%s passes' % self.player.username
         return 'Bid %s by %s' % (self.get_bid_display(), self.player.username)
+    
+    def mate_card_display(self):
+        return Card.get_card_number_display(self.mate_card)
     
     def is_rik(self):
         if self.bid in [self.RIK, self.RIKp1, self.RIKp2, self.RIKp3, self.RIKp4, self.RIKp5]:
@@ -106,6 +118,9 @@ class Round(models.Model):
     
     class CantPlayThatCardException(Exception):
         pass
+    
+    class Meta():
+        ordering = ('-id', )
     
     game = models.ForeignKey('Game', related_name='rounds')
     
@@ -369,6 +384,16 @@ class Round(models.Model):
         self.game.changed()
         super(Round, self).save(*args, **kwargs)
         
+class Score(models.Model):
+    """
+    Holds the score for a player at the start of a round
+    
+    """
+    round = models.ForeignKey(Round, related_name='scores')
+    player = models.ForeignKey(get_user_model(), related_name='scores')
+    
+    score = models.IntegerField()
+        
 
 class Trick(models.Model):
     
@@ -513,6 +538,10 @@ class Game(models.Model):
         new_round = Round(game=self, dealer=self.next_dealer(), next_player_to_bid=self.get_next_player(self.next_dealer()))
         new_round.save()
         
+        # Save score for each player at the start of this round
+        for isplaying in self.isplaying_set.all():
+            Score(round=new_round, player=isplaying.player, score=isplaying.score).save()
+        
         self.current_round = new_round
         self.deal()
         self.save()
@@ -548,6 +577,7 @@ class Game(models.Model):
         for isplaying in self.isplaying_set.all():
             isplaying.score = isplaying.score + self.current_round.get_points_earned(isplaying.player)
             isplaying.save()
+            
         # Put all cards in deck in order
         ordinal = 0
         for trick in self.current_round.tricks.all().order_by('-number'):

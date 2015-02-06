@@ -1,10 +1,15 @@
 from portal import bidding_needed, playing_needed, collection_needed
-from portal.models import Bid
+from portal.models import Bid, Round, Card
 
 def do_bidding(sender, **kwargs):
     next_player_to_bid = sender.next_player_to_bid
     if next_player_to_bid.is_bot:
-        sender.place_bid(next_player_to_bid, Bid.PASS)
+        try:
+            sender.place_bid(next_player_to_bid, Bid.PASS)
+        except Round.CannotPassException:
+            sender.place_bid(next_player_to_bid, Bid.RIK)
+            # TODO: put some error checking here:
+            sender.finalize_bid(trump_suit=Card.CLUBS, mate_suit=Card.HEARTS, mate_cardnumber=1)
 bidding_needed.connect(do_bidding)
 
 def do_play_card(sender, **kwargs):

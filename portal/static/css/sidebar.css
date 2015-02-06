@@ -1,0 +1,67 @@
+/*!
+ * Start Bootstrap - Simple Sidebar HTML Template (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+/* Toggle Styles */
+#sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    right: 0;
+    height: 100%;
+    width: 250px;
+    color: #fff;
+}
+
+/* Sidebar Styles */
+
+.sidebar-nav {
+    position: absolute;
+    top: 0;
+    width: 250px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sidebar-nav li {
+    text-indent: 0px;
+    line-height: 40px;
+    margin: 0 5px;
+}
+
+.sidebar-nav li.names {
+    border-bottom: 1px solid #fff;
+    margin-bottom: 10px;
+}
+
+.sidebar-nav li.score {
+    text-indent: 0px;
+    line-height: 20px;
+}
+
+.sidebar-nav li span {
+	float: left;
+	width: 25%;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	text-align: center;
+	overflow: hidden
+}
+
+.sidebar-nav > .sidebar-brand {
+    height: 40px;
+    font-size: 18px;
+    line-height: 60px;
+}
+
+.sidebar-nav > .sidebar-brand a {
+    color: #999999;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+    color: #fff;
+    background: none;
+}

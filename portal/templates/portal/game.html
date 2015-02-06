@@ -1,9 +1,16 @@
 {% extends "base.html" %}
-{% load static player_ordering %}
+{% load static player_ordering addcss %}
 
-{% block css %}
-	<link href='/static/css/game.css' rel='stylesheet' type='text/css'>
-	<script src="{{ STATIC_URL }}js/jquery.min.js" type="text/javascript"></script>
+{% block extra_head %}
+	<link href="{{ STATIC_URL }}css/playing-cards.css" rel="stylesheet">
+	<link href='{{ STATIC_URL }}css/sidebar.css' rel='stylesheet' type='text/css' />
+	<link href='{{ STATIC_URL }}css/game.css' rel='stylesheet' type='text/css' />
+	<script type="text/javascript">
+		$(window).load(function() {
+			// Show any model dialog on the page
+        	$('.modal').modal('show');
+     	});
+	</script>
 	<script src="{{ STATIC_URL }}js/game.js" type="text/javascript"></script>
 	<script>
 		$(function() {
@@ -24,7 +31,9 @@
 					        player: {{ user.id }} },
 					
 				}).done(function(update) {
-					update_game(update);
+					if (update.update) {
+						update_game(update);
+					}
 					set_timer();
 				});
 			}
@@ -33,21 +42,330 @@
 {% endblock %}
 
 {% block content %}
-		<div id="game">
-			<div id="players">
-				{% include "includes/players.html" %}
+
+<div class="navbar navbar-default navbar-fixed-top">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button class="navbar-toggle collapsed" aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" type="button">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+	   		<a class="navbar-brand">Rikken Game #{{ game.id }}</a>
+	  	</div>
+	  	<div id="navbar" class="navbar-collapse collapse navbar-default-collapse">
+		  	<ul class="nav navbar-nav">
+		  		<li><a href="{% url 'portal' %}">Back to Portal</a></li>
+		  	</ul>
+		    <ul class="nav navbar-nav navbar-right">
+		      <li><a href="#sidebar-wrapper" data-toggle="collapse">Show/Hide Score History</a></li>
+		      <li><a href="{% url 'logout' %}">Logout</a></li>
+		    </ul>
+	  </div>
+	</div>
+</div>
+
+<!-- Sidebar -->
+<div id="sidebar-wrapper" class="navbar-default collapse" aria-expanded="false" style="height:0;">
+	<ul class="sidebar-nav">
+		<li class="sidebar-brand">
+			<h2 class="text-center">
+				Score History
+			</h2>
+		</li>
+		<li class="names">
+			{% for isplaying in game.isplaying_set.all %}
+			<span>{{ isplaying.player.username }}</span>
+			{% endfor %}
+			<br class="clear" />
+		</li>
+		{% for round in game.rounds.all %}
+		<li class="score">
+			{% for score in round.scores.all %}
+			<span>{{ score.score }}</span>
+			{% endfor %}
+			<br class="clear" />
+		</li>
+		{% empty %}
+		<li class="score">
+			{% for isplaying in game.isplaying_set.all %}
+			<span>{{ isplaying.score }}</span>
+			{% endfor %}
+			<br class="clear" />
+		</li>
+		{% endfor %}
+</ul>
+</div>
+<!-- /#sidebar-wrapper -->
+
+<div id="playground">
+
+	{% if messages %}
+		{% for message in messages %}
+		<div class="alert alert-dismissable alert-{{ message.tags }}">
+		  	<button type="button" class="close" data-dismiss="alert">×</button>
+		  	{{ message }}
+		</div>
+		{% endfor %}
+	{% endif %}
+	
+	{% if game.current_round != None and game.current_round.highest_bid != None and game.current_round.highest_bid.trump_suit != None and not game.current_round.tricks_played >= 13 %}
+		
+		<div id="round-trump-display" class="panel panel-primary">
+			<div class="panel-heading">
+		    	<h3 class="panel-title text-left">
+		    		Current Round Information
+		    	</h3>
+		    </div>
+		    <div class="panel-body">
+				<div>
+					<span class="info">Trump suite:</span>
+					<span class="card suit-{{ game.current_round.highest_bid.trump_suit }}">{{ game.current_round.highest_bid.get_trump_suit_display }}</span>
+				</div>
+				<div>
+					<span class="info">Mate Card:</span>
+					<span class="card suit-{{ game.current_round.highest_bid.mate_suit }}">{{ game.current_round.highest_bid.mate_card }}{{ game.current_round.highest_bid.get_mate_suit_display }}</span>
+				</div>
+		    </div>
+		</div>
+				
+		{% if game.current_round.previous_trick %}
+		<div id="prev-trick-display" class="panel panel-primary">
+			<div class="panel-heading">
+		    	<h3 class="panel-title text-left">
+		    		Previous Trick
+		    	</h3>
+		    </div>
+		    <div class="panel-body">
+				{% for card in game.current_round.previous_trick.cards.all %}
+					<img src="{% static card.image_file %}" />
+				{% endfor %}
+		    </div>
+		</div>
+		{% endif %}
+	{% endif %}
+
+	{% for isplaying in game.isplaying_set.all %}
+	<div class="player" id="player-{% seat_number game isplaying user %}">
+		<div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+			    	<h3 class="panel-title text-left">
+			    		{{ isplaying.player.username }}
+			    		{% if game.current_round.dealer == isplaying.player %}<img class="role-img" title="This player is the dealer" src="/static/img/dealer_button.png" />{% endif %}
+						{% if game.current_round.playing and game.current_round.next_player_to_play == isplaying.player and isplaying.player != user %} (It's this players turn){% endif %}
+						{% if game.current_round.highest_bid.player == isplaying.player %}<img class="role-img" title="This player made the highest bid" src="/static/img/star.png" />{% endif %}
+						{% if game.current_round.mate == isplaying.player and game.current_round.mate_card_played %}<img class="role-img" title="This player is the mate" src="/static/img/mate.png" />{% endif %}
+						<p class="score">Score: {{ isplaying.score }}</p>
+					</h3>
+			  </div>
+			  <div class="panel-body text-left">
+			  	{% if game.current_round.highest_bid != None and isplaying.current_tricks != None %}
+				<p class="player-tricks">Tricks won: {{ isplaying.current_tricks }}</p>
+				{% endif %}
+				
+				{% if game.current_round != None and game.current_round.highest_bid == None %}
+					<p class="current-bid">Current Bid: {{ isplaying.last_bid|default_if_none:"No bid placed yet." }}</p>
+				{% endif %}
+				
+				{% if game.current_round != None and game.current_round.playing and game.current_round.next_player_to_play == user and isplaying.player == user %}
+					<p><b>It's your turn, please pick a card to play</b></p>
+				{% endif %}
+				
+				{% if game.current_round != None %}
+				<div class="player-cards">
+					{% for card in isplaying.cards.all %}
+						{% if isplaying.player == user %}
+							{% if game.current_round != None and game.current_round.playing and game.current_round.next_player_to_play == user and isplaying.player == user %}
+								<a href="{% url 'play_card' game.id card.identifier %}">
+									<img src="{% static card.image_file %}" />
+								</a>
+							{% else %}
+								<img src="{% static card.image_file %}" />
+							{% endif %}
+						{% else %}
+							<div class="card-back"></div>
+						{% endif %}
+					{% empty %}
+						{% if isplaying.player == user %}
+							<p>You don't have any cards left...</p>
+						{% endif %}
+					{% endfor %}
+				</div>
+				{% endif %}
+			  </div>
 			</div>
-			
-			<div id="playfield-centerer">
-				<div id="playfield-container">
-					{% include "includes/playfield.html" %}
+		</div>
+	</div>
+	{% endfor %}
+	
+	
+	
+	{% if game.current_round == None %}
+	<div class="modal fade" data-backdrop="false" style="top: 30%;">
+		<div class="modal-dialog">
+	    	<div class="modal-content">
+	      		<div class="modal-header">
+	        		<h4 class="modal-title">The next round is ready to start</h4>
+	      		</div>
+	      		<div class="modal-footer">
+	        		<a href="{% url 'start_round' game.id %}" class="btn btn-primary">Start Next Round</a>
+	      		</div>
+	    	</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+	{% elif game.current_round.highest_bid == None %}
+		
+		<div class="modal fade" data-backdrop="false">
+			<div class="modal-dialog">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+		        		<h4 class="modal-title">Place your bid</h4>
+		      		</div>
+		      		<form id="bidding-form" action="{% url 'place_bid' game.id %}" method="POST">
+						{% csrf_token %}
+						<div class="modal-body">
+							{% if game.current_round.temp_highest_bid == None %}
+							<p><b>No bids have been placed yet</b></p>
+							{% else %}
+							<p>Highest bid: <b>{{ game.current_round.temp_highest_bid }}</b></p>
+							{% endif %}
+					
+							{% if bid_form %}
+							<p>Please place your bid:</p>
+							<div class="form-group">
+								{{ bid_form.bid|addcss:"class,form-control" }}
+							</div>
+							{% else %}
+							<p>Waiting for <b>{{ game.current_round.next_player_to_bid.username }}</b> to place a bid</p>
+							{% endif %}
+		      			</div>
+		      		
+			      		<div class="modal-footer">
+							<input class="btn btn-primary" type=submit value="Place bid" />
+			      		</div>
+			      	</form>
+		    	</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+						
+	{% elif not game.current_round.playing %}
+		<div id="picking-form" class="modal fade" data-backdrop="false">
+			<div class="modal-dialog">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+		        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        		<h4 class="modal-title">Pick Trump suit and Mate card</h4>
+		      		</div>
+		      		{% if trump_and_mate_form %}
+					<form action="{% url 'pick_trump_and_mate' game.id %}" method="POST">
+						{% csrf_token %}
+						<div class="modal-body">
+							<p>
+								Please pick a trump suit and a mate card
+							</p>
+							<div class="form-group">
+								{{ trump_and_mate_form.trump_suit|addcss:"class,form-control" }}
+							</div>
+							<div class="form-group">
+								{{ trump_and_mate_form.mate_suit|addcss:"class,form-control" }}
+							</div>
+						</div>
+						
+						<div class="modal-footer">
+							<input class="btn btn-default" type="submit" value="Pick" />
+						</div>
+					</form>
+					{% elif trump_form %}
+					<form action="{% url 'pick_trump' game.id %}" method="POST">
+						{% csrf_token %}
+						<div class="modal-body">
+							<p>
+								Please pick a trump suit
+							</p>	
+							<div class="form-group">
+								{{ trump_form.trump_suit|addcss:"class,form-control" }}
+							</div>
+						</div>
+						
+						<div class="modal-footer">
+							<input type="submit" value="Pick" />
+						</div>
+					</form>
+					
+					{% else %}
+					<div class="modal-body">
+						<p>
+							<b>{{ game.current_round.highest_bid.player.username }}</b> has won the bidding round with a: <b>{{ game.current_round.highest_bid.get_bid_display }}</b>
+						</p>
+						<p>
+							Waiting for <b>{{ game.current_round.highest_bid.player.username }}</b> to pick the Trump suit{% if game.current_round.highest_bid.mate_card_needed %} and a Mate card{% endif %}.
+						</p>
+					</div>
+					{% endif %}
 				</div>
 			</div>
-			
-			<div id="extra_info">
-				{% include "includes/extra_info.html" %}
-			</div>
-			
 		</div>
-		<a href="/" style="position: absolute; bottom: 5px; right: 10px;">Back to portal</a>
+					
+	{% else %}						
+		{% if game.current_round.current_trick %}
+			{% current_trick_display game user %}
+					
+			{% if game.current_round.current_trick.is_done %}
+				{% if game.current_round.current_trick.winner == user %}
+				<div class="modal fade" data-backdrop="false" style="top: 10px;">
+					<div class="modal-dialog">
+				    	<div class="modal-content">
+				      		<div class="modal-header">
+				        		<h4 class="modal-title">You won this trick!</h4>
+				      		</div>
+				      		<div class="modal-footer">
+								<a class="btn btn-primary" href="{% url 'collect_trick' game.id %}">Collect your trick</a>
+				      		</div>
+				      	</div>
+				    </div>
+				</div>
+				{% else %}
+				<div style="position: absolute; top: -55px; width: 100%; text-align: center;">
+					<h3 style="margin: 0">{{ game.current_round.current_trick.winner.username }} won this trick:</h3>
+					Please wait for him to collect his trick.
+				</div>
+				{% endif %}
+			{% endif %}
+		{% endif %}
+	{% endif %}
+					
+					
+	{% if game.current_round.tricks_played >= 13 %}
+		<div class="modal fade" data-backdrop="false" style="">
+			<div class="modal-dialog">
+		    	<div class="modal-content">
+		      		<div class="modal-header">
+		        		<h4 class="modal-title">Round #{{ game.round_number }} is finished</h4>
+				    </div>
+				    <div class="modal-body">
+						<p>
+							<b>{{ game.current_round.highest_bid.player }}</b> led the game with a: <b>{{ game.current_round.highest_bid.get_bid_display }}</b>
+							{% if game.current_round.mate != None %}<br />His mate was <b>{{ game.current_round.mate }}</b>.{% endif %}
+						</p>
+						<p>
+							{% if game.current_round.mate != None %}Together they{% else %}He/She{% endif %} got <b>{{ game.current_round.asking_team_tricks }}</b> tricks.
+							{% if game.current_round.asking_team_won %}That means {% if game.current_round.mate != None %}they{% else %}he/she{% endif %} won!{% else %}That means {% if game.current_round.mate != None %}they{% else %}he/she{% endif %} lost.{% endif %}
+						</p>
+						<p>
+							{% if game.current_round.mate != None %}They each get{% else %}He/She gets{% endif %} <b>{{ game.current_round.asking_team_points }}</b> point{% if game.current_round.asking_team_points != 1 %}s{% endif %} and the other players get <b>{{ game.current_round.other_player_points }}</b> points.
+						</p>
+				    </div>
+				    <div class="modal-footer">
+						<a class="btn btn-primary" href="{% url 'start_round' game.id %}">Start next round</a>
+				    </div>
+				</div>
+		    </div>
+		</div>
+			
+	{% endif %}
+</div>
+
 {% endblock %}

@@ -1,0 +1,175 @@
+html, body {
+	height: 100%;
+}
+
+#playground {
+	height: 100%;
+	position: relative;
+}
+
+#playground .alert {
+	position: absolute;
+	z-index: 1000;
+	top: 10px;
+	width: 90%;
+	margin: 0 5%;
+	opacity: .9;
+}
+
+#playground .player {
+	position: absolute;
+	min-width: 250px;
+	margin: 0 10px;
+}
+
+#playground #player-0 {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+}
+
+#playground #player-0 .panel {
+	display: inline-block;
+	min-width: 250px;
+}
+
+#playground #player-1 {
+	bottom: 50%;
+	left: 0;
+}
+
+#playground #player-2 {
+	top: 10px;
+	left: 50%;
+}
+
+#playground #player-2 > div {
+	position: absolute;
+	width: 100%;
+	left: -50%;
+}
+
+#playground #player-3 {
+	bottom: 50%;
+	right: 0;
+}
+
+.player .role-img {
+	height: 22px;
+	margin-left: 5px;
+}
+
+.player .score {
+	float: right;
+	margin-left: 20px;
+}
+
+.player .player-cards {
+	white-space: nowrap;
+	display: block;
+}
+
+#playground #round-trump-display {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
+
+#playground #round-trump-display .panel-body {
+	padding-top: 5px;
+}
+
+#playground #round-trump-display .info {
+	display: inline-block;
+	width: 100px;
+}
+
+#playground #round-trump-display .card {
+	display: inline-block;
+	width: 30px;
+	text-align: right;
+	font-family: HoylePlayingCards;
+	font-size: 25px;
+	line-height: 20px;
+}
+
+#playground #round-trump-display .card.suit-1,
+#playground #round-trump-display .card.suit-2 {
+	color: #d9534f;
+}
+
+#playground #prev-trick-display {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+#playground #prev-trick-display .panel-heading,
+#playground #round-trump-display .panel-heading {
+	padding: 0 15px 0 5px;
+}
+
+#playground #prev-trick-display img {
+	height: 60px;
+}
+
+#playground #current-trick-display {
+	position: absolute;
+	top: 40%;
+	width: 0px;
+	height: 0px;
+	left: 50%;
+	text-align: center;
+}
+
+#current-trick-display #trick-card-1 {
+	position: absolute;
+	top: 10px;
+	right: -36px;
+}
+
+#current-trick-display #trick-card-2 {
+	position: absolute;
+	top: -48px;
+	right: 38px;
+}
+
+#current-trick-display #trick-card-3 {
+	position: absolute;
+	bottom: 10px;
+	right: -36px;
+}
+
+#current-trick-display #trick-card-4 {
+	position: absolute;
+	top: -48px;
+	left: 38px;
+}
+
+
+#playground .modal {
+	position: absolute;
+	top: 10%;
+	bottom: auto;
+}
+
+#playground .modal#picking-form select {
+	font-family: HoylePlayingCards;
+	font-size: 30px;
+	line-height: 10px;
+	padding-top: 0;
+	padding-bottom: 0;
+	text-align: center;
+}
+
+#playground .modal#picking-form option[value="1"],
+#playground .modal#picking-form option[value="2"] {
+	color: #d9534f;
+}
+
+@media(max-width:768px) {
+	#playground {
+		right: 0;
+	}
+}

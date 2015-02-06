@@ -64,7 +64,7 @@ def decline_invitation(request, game_id):
         isplaying = IsPlaying.objects.get(game__id=game_id, player=request.user, accepted=False, abandoned=False)
     except IsPlaying.DoesNotExist:
         raise PermissionDenied("You cannot decline this invitation because you were not invited to this game")
-    isplaying.abaondoned = True
+    isplaying.abandoned = True
     isplaying.save()
     return redirect('portal')
 
@@ -147,7 +147,11 @@ def pick_trump_and_mate(request, game_id):
             mate_cardnumber = None
             
             # Check if the wanted mate is possible
-            if trump == mate:
+            if trump is None:
+                messages.add_message( request, messages.SUCCESS, 'You must choose a trump suit.')
+            elif mate is None:
+                messages.add_message( request, messages.SUCCESS, 'You must choose a mate suit.')
+            elif trump == mate:
                 messages.add_message( request, messages.SUCCESS, 'You cannot pick the trump suit as mate.')
             else:
                 isplaying = IsPlaying.objects.get(game=game, player=request.user)

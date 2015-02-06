@@ -1,121 +1,180 @@
 {% extends "base.html" %}
+{% load addcss %}
 
 {% block title %}
 	Portal
 {% endblock %}
 
-{% block pagetitle %}
-	<h1 class="page-title">Rikken Portal</h1>
-{% endblock %}
 
 {% block content %}
-	<a href="/logout/" id="logout-button">Logout</a>
-	
-	<div id="new-game">
-		<h2>New Game</h2>
-		<p>
-			Here you can invite people to play a game of rikken with you. Enter the names of 
-			the people you would like to invite. If you invite less than 4 people, the remaining
-			spots will be filled with bots.
-		</p>
-		<form action="/newgame/" method="POST">
-			{% csrf_token %}
-			<ol>
-				<li>{{ start_game_form.player1 }}</li>
-				<li>{{ start_game_form.player2 }}</li>
-				<li>{{ start_game_form.player3 }}</li>
-			</ol>
-			<input type="submit" value="Start new game" />
-		</form>
+
+<div class="navbar navbar-default navbar-fixed-top">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button class="navbar-toggle collapsed" aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" type="button">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+	   		<a class="navbar-brand">Rikken Portal</a>
+	  	</div>
+	  	<div id="navbar" class="navbar-collapse collapse navbar-default-collapse">
+		    <ul class="nav navbar-nav navbar-right">
+		      <li><a href="#sidebar-wrapper" data-toggle="collapse">Show/Hide Game History</a></li>
+		      <li><a href="{% url 'logout' %}">Logout</a></li>
+		    </ul>
+	  </div>
 	</div>
-	
-	<div id="current-games">
-		<h2>Current games</h2>
-		<p>
-			Here you can view the games you are currently playing and check their status.
-		</p>
-		{% for game in games %}
-			<h3 class="game-id">
-				{{ game }}
-			</h3>
-			<div class="game">
-				<b>Players:</b>
-				<table class="players">
-					<tr>
-						<th width="50px">Seat</td>
-						<th width="200px">Username</td>
-						<th>Current score</td>
-					</tr>
-					{% for isplaying in game.isplaying_set.all %}
+</div>
+
+<div class="container" style="margin-top: 20px;">
+	<div class="row">
+		<div class="col-xs-12 col-sm-4">
+			<div class="panel panel-default">
+			  <div class="panel-heading">Current Games</div>
+			  <div class="panel-body">
+			    <p>
+					Here you can view the games you are currently playing and check their status.
+				</p>
+				{% for game in games %}
+				<div class="game" {% if not forloop.last %}style="border-bottom: 1px solid #ddd;"{% endif %}>
+					<h3 class="game-id">
+						{{ game }}
+					</h3>
+					<table class="players">
+						<tr>
+							<th width="50px">Seat</td>
+							<th width="200px">Username</td>
+							<th style="white-space:nowrap">Current score</td>
+						</tr>
+						{% for isplaying in game.isplaying_set.all %}
 						<tr>
 							<td>{{ forloop.counter }}</td>
 							<td>{{ isplaying.player.username }}{% if isplaying.abandoned %} (Abandoned){% endif %}</td>
-							<td style="text-align: center;">{{ isplaying.score }}</td>
-						</td>
-					{% endfor %}
-				</table>
-				<b>Game status: </b>{% if game.round_number > 0 %}Round #{{ game.round_number }} - {% endif %}{{ game.status }}
-				<p>
-					<a href="{% url 'game' game.id %}">Resume game</a> - <a href="{% url 'abandon_game' game.id %}">Abandon game</a>
-				</p>
-			</div>
-		{% endfor %}
-	</div>
-	
-	<div id="invitations">
-		<h2>Open invitations</h2>
-		<p>
-			Here you can view the games to which you have been invited and accept or reject the invitation.
-		</p>
-		{% for game in invitations %}
-		<div class="invitation">
-			{{ game.isplaying_set.all.0.player.username }} invited you to a game. The players are: 
-			{% for isplaying in game.isplaying_set.all %}{{ isplaying.player.username }}{% if not forloop.last %}, {% endif %}{% endfor %}
-			<p style="margin: 5px 0;">
-				<a href="{% url 'accept_invitation' game.id %}">Accept</a> - <a href="{% url 'decline_invitation' game.id %}">Decline</a>
-			</p>	
-		</div>
-		{% empty %}
-		<p style="margin-left: 20px; font-weight: bold;">
-			You have no open invitations...
-		</p>
-		{% endfor %}
-	</div>
-	
-	<div id="pending-games">
-		<h2>Games awaiting acceptation</h2>
-		<p>
-			Here you can view the status of games to which you have invited other people. You can see
-			who was accepted your invitation and who hasn't.
-		</p>
-		{% for game in pending_games %}
-		<div class="pending-game">
-			<h3>{{ game }}{% if game.isplaying_set.all.0.player == user %} (<a href="{% url 'cancel_game' game.id %}">Cancel invitation</a>){% endif %}</h3>
-			<table class="players">
-				<tr>
-					<th width="50px">Seat</td>
-					<th width="200px">Username</td>
-					<th>Status</td>
-				</tr>
-				{% for isplaying in game.isplaying_set.all %}
-					<tr>
-						<td>{{ forloop.counter }}</td>
-						<td>{{ isplaying.player.username }}</td>
-						<td>{% if isplaying.accepted %}Accepted{% elif isplaying.rejected %}Declined{% else %}Not accepted yet{% endif %}</td>
-					</td>
+							<td style="text-align: right;">{{ isplaying.score }}</td>
+						</tr>
+						{% endfor %}
+					</table>
+					<p style="margin-top: 10px;">
+						<b>Game status: </b>{% if game.round_number > 0 %}Round #{{ game.round_number }} - {% endif %}{{ game.status }}
+					</p>
+					<p class="text-center">
+						<a class="btn btn-success" href="{% url 'game' game.id %}" style="margin-right: 20px;">Resume game</a>
+						<a class="btn btn-danger" href="{% url 'abandon_game' game.id %}">Abandon game</a>
+					</p>
+				</div>
+				{% empty %}
+				<p style="margin-left: 20px; font-weight: bold;">
+					You are currently not participating in any games.
+				</p>	
 				{% endfor %}
-			</table>
-			{% if game.everybody_accepted and game.isplaying_set.all.0.player == user %}
-				<p>
-					Everybody has accepted your invitation. Click <a href="{% url 'start_game' game.id %}">here</a> to start the game
-				</p>
-			{% endif %}
+			  </div>
+			</div>
 		</div>
-		{% empty %}
-		<p style="margin-left: 20px; font-weight: bold;">
-			You have no games awaiting acceptation...
-		</p>
-		{% endfor %}
+		
+		
+		<div class="col-xs-12 col-sm-4">
+			<div class="panel panel-default">
+			  <div class="panel-heading">Create New Game</div>
+			  <div class="panel-body">
+				<p>
+					Here you can invite people to play a game of rikken with you. Enter the names of 
+					the people you would like to invite. If you invite less than 4 people, the remaining
+					spots will be filled with bots.
+				</p>
+				<form action="{% url 'new_game' %}" method="POST">
+					{% csrf_token %}
+					
+					<div class="form-group">
+						{{ start_game_form.player1|addcss:"class,form-control" }}
+					</div>
+					<div class="form-group">
+						{{ start_game_form.player2|addcss:"class,form-control" }}
+					</div>
+					<div class="form-group">
+						{{ start_game_form.player3|addcss:"class,form-control" }}
+					</div>
+						
+					<input class="form-control" type="submit" value="Start new game" />
+				</form>
+			  </div>
+			</div>
+		</div>
+		
+		<div class="col-xs-12 col-sm-4">
+			<div class="panel panel-default">
+			  <div class="panel-heading">Open invitations</div>
+			  <div class="panel-body">
+			    <p>
+					Here you can view the status of games to which you have invited other people. You can see
+					who has accepted your invitation and who hasn't.
+				</p>
+				{% for game in pending_games %}
+				<div class="pending-game" style="padding-bottom: 10px;{% if not forloop.last %}border-bottom: 1px solid #ddd;{% endif %}">
+					<h4>{{ game }}{% if game.isplaying_set.all.0.player == user %} <a href="{% url 'cancel_game' game.id %}" style="float: right;color: #333;" title="Cancel this game"><span class="glyphicon glyphicon-remove"></span></a>{% endif %}</h4>
+					<table class="players">
+						<tr>
+							<th width="50px">Seat</td>
+							<th width="200px">Username</td>
+							<th>Status</td>
+						</tr>
+						{% for isplaying in game.isplaying_set.all %}
+						<tr>
+							<td>{{ forloop.counter }}</td>
+							<td>{{ isplaying.player.username }}</td>
+							<td style="white-space:nowrap">{% if isplaying.accepted %}Accepted{% elif isplaying.abandoned %}Declined{% else %}Not accepted yet{% endif %}</td>
+						</tr>
+						{% endfor %}
+					</table>
+					{% if game.everybody_accepted %}
+						<p style="margin-top: 5px;">
+							Everybody has accepted, waiting for creator to start the game.
+						</p>
+						{% if game.isplaying_set.all.0.player == user %}
+						<p class="text-center">
+							<a class="btn btn-success" href="{% url 'start_game' game.id %}">Start Game</a>
+						</p>
+						{% endif %}
+					{% endif %}
+				</div>
+				{% empty %}
+				<p style="margin-left: 20px; font-weight: bold;">
+					You have no games awaiting acceptation.
+				</p>
+				{% endfor %}
+			  </div>
+			</div>
+		</div>
+		
+		<div class="col-xs-12 col-sm-4">
+			<div class="panel panel-default">
+			  <div class="panel-heading">Games awaiting acceptation</div>
+			  <div class="panel-body">
+			    <p>
+					Here you can view the games to which you have been invited and accept or reject the invitation.
+				</p>
+				{% for game in invitations %}
+				<div class="invitation" {% if not forloop.last %}style="border-bottom: 1px solid #ddd;"{% endif %}>
+					<h4>Invitation by {{ game.isplaying_set.all.0.player.username }}</h4>
+					The players are: 
+					<br />
+					{% for isplaying in game.isplaying_set.all %}<b>{{ isplaying.player.username }}</b>{% if not forloop.last %}, {% endif %}{% endfor %}
+					<p class="text-center" style="margin-top: 10px;">
+						<a class="btn btn-success" href="{% url 'accept_invitation' game.id %}" style="margin-right: 20px;">Accept</a>
+						<a class="btn btn-danger" href="{% url 'decline_invitation' game.id %}">Decline</a>
+					</p>	
+				</div>
+				{% empty %}
+				<p style="margin-left: 20px; font-weight: bold;">
+					You have no open invitations.
+				</p>
+				{% endfor %}
+			  </div>
+			</div>
+		</div>
+		
 	</div>
+</div>
 
 {% endblock %}
