@@ -3,6 +3,9 @@ Rikker
 
 An online application allowing people to play the trick taking card game 'Rikken' against each other online.
 
+##### Play the game
+You can play a current version of the game at [http://gargamel1989.pythonanywhere.com/](http://gargamel1989.pythonanywhere.com/)
+
 #### Latest Release: Alpha (v0.1)
 
 ###### What works
