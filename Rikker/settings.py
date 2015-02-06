@@ -4,6 +4,9 @@ import os
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+# The directory containing the source code
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -13,7 +16,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'C:\\Users\\Joep\\Eclipse\\Rikker\\sqlite.db',                      # Or path to database file if using sqlite3.
+        'NAME': os.path.join(BASE_DIR, 'sqlite.db'),                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
@@ -25,9 +28,6 @@ DATABASES = {
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
-
-# The directory containing the source code
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -136,7 +136,7 @@ INSTALLED_APPS = (
     'bot',
 )
 
-FIXTURE_DIRS = ('C:/Users/Joep/Eclipse/Rikker/portal/fixtures',)
+FIXTURE_DIRS = (os.path.join(BASE_DIR, 'portal/fixtures'),)
 
 AUTH_USER_MODEL = 'authentication.User'
 LOGIN_URL = '/login/'

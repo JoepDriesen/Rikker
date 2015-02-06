@@ -13,4 +13,4 @@ def register(request, *args, **kwargs):
             return redirect('/login/')
     else:
         registration_form = RegistrationForm()
-    return render(request, 'authentication/registration.html', {'registration_form': registration_form})
+    return render(request, 'authentication/registration.html', {'form': registration_form})
