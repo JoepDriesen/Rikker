@@ -8,23 +8,23 @@ import os
 # The directory containing the source code
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DEBUG = True
+DEBUG = False
 
 # DATABASE SECTION
-DATABASE_ENGINE = 'django.db.backends.sqlite3'
-DATABASE_NAME = os.path.join(BASE_DIR, 'sqlite.db')
+DATABASE_ENGINE = ''
+DATABASE_NAME = ''
 DATABASE_USER = ''
 DATABASE_PASSWORD = ''
 DATABASE_HOST = ''
 DATABASE_PORT = ''
 
 # SERVER DIRECTORIES
-MEDIA_ROOT = '/tmp'
-STATIC_ROOT = '/tmp'
+MEDIA_ROOT = ''
+STATIC_ROOT = ''
 
 # URLs that handles the files served from MEDIA_ROOT and STATIC_ROOT. Make sure to use a
 # trailing slash.
-MEDIA_URL = '/media/'
-STATIC_URL = '/static/'
+MEDIA_URL = ''
+STATIC_URL = ''
 
-SITE_ID = 1
+SITE_ID = 0
