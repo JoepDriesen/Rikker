@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from portal.models import Game, Card, IsPlaying, IsInDeck, Round, Bid, Trick,\
+from game.models import Game, Card, IsPlaying, IsInDeck, Round, Bid, Trick,\
     PlayedInTrick
 
 class IsPlayingInline(admin.TabularInline):

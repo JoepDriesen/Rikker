@@ -55,6 +55,13 @@ html, body {
 	right: 0;
 }
 
+.player .panel-title .glyphicon {
+	color: #333;
+	font-size: 18px;
+	margin-left: 5px;
+	cursor: pointer;
+}
+
 .player .role-img {
 	height: 22px;
 	margin-left: 5px;

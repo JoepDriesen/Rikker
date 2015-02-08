@@ -131,10 +131,11 @@ INSTALLED_APPS = (
     
     'authentication',
     'portal',
+    'game',
     'bot',
 )
 
-FIXTURE_DIRS = (os.path.join(BASE_DIR, 'portal/fixtures'),)
+FIXTURE_DIRS = (os.path.join(BASE_DIR, 'game/fixtures'),)
 
 AUTH_USER_MODEL = 'authentication.User'
 LOGIN_URL = '/login/'
@@ -171,9 +172,9 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['console']
-        },
+#         'django.db.backends': {
+#             'level': 'DEBUG',
+#             'handlers': ['console']
+#         },
     }
 }

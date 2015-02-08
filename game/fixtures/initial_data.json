@@ -27,364 +27,364 @@
 }
 },
 {
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 1,
 "fields": {
   "suit": 0,
   "number": 1
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 2,
 "fields": {
   "suit": 0,
   "number": 2
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 3,
 "fields": {
   "suit": 0,
   "number": 3
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 4,
 "fields": {
   "suit": 0,
   "number": 4
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 5,
 "fields": {
   "suit": 0,
   "number": 5
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 6,
 "fields": {
   "suit": 0,
   "number": 6
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 7,
 "fields": {
   "suit": 0,
   "number": 7
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 8,
 "fields": {
   "suit": 0,
   "number": 8
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 9,
 "fields": {
   "suit": 0,
   "number": 9
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 10,
 "fields": {
   "suit": 0,
   "number": 10
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 11,
 "fields": {
   "suit": 0,
   "number": 11
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 12,
 "fields": {
   "suit": 0,
   "number": 12
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 13,
 "fields": {
   "suit": 0,
   "number": 13
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 14,
 "fields": {
   "suit": 1,
   "number": 1
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 15,
 "fields": {
   "suit": 1,
   "number": 2
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 16,
 "fields": {
   "suit": 1,
   "number": 3
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 17,
 "fields": {
   "suit": 1,
   "number": 4
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 18,
 "fields": {
   "suit": 1,
   "number": 5
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 19,
 "fields": {
   "suit": 1,
   "number": 6
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 20,
 "fields": {
   "suit": 1,
   "number": 7
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 21,
 "fields": {
   "suit": 1,
   "number": 8
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 22,
 "fields": {
   "suit": 1,
   "number": 9
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 23,
 "fields": {
   "suit": 1,
   "number": 10
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 24,
 "fields": {
   "suit": 1,
   "number": 11
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 25,
 "fields": {
   "suit": 1,
   "number": 12
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 26,
 "fields": {
   "suit": 1,
   "number": 13
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 27,
 "fields": {
   "suit": 2,
   "number": 1
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 28,
 "fields": {
   "suit": 2,
   "number": 2
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 29,
 "fields": {
   "suit": 2,
   "number": 3
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 30,
 "fields": {
   "suit": 2,
   "number": 4
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 31,
 "fields": {
   "suit": 2,
   "number": 5
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 32,
 "fields": {
   "suit": 2,
   "number": 6
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 33,
 "fields": {
   "suit": 2,
   "number": 7
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 34,
 "fields": {
   "suit": 2,
   "number": 8
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 35,
 "fields": {
   "suit": 2,
   "number": 9
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 36,
 "fields": {
   "suit": 2,
   "number": 10
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 37,
 "fields": {
   "suit": 2,
   "number": 11
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 38,
 "fields": {
   "suit": 2,
   "number": 12
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 39,
 "fields": {
   "suit": 2,
   "number": 13
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 40,
 "fields": {
   "suit": 3,
   "number": 1
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 41,
 "fields": {
   "suit": 3,
   "number": 2
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 42,
 "fields": {
   "suit": 3,
   "number": 3
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 43,
 "fields": {
   "suit": 3,
   "number": 4
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 44,
 "fields": {
   "suit": 3,
   "number": 5
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 45,
 "fields": {
   "suit": 3,
   "number": 6
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 46,
 "fields": {
   "suit": 3,
   "number": 7
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 47,
 "fields": {
   "suit": 3,
   "number": 8
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 48,
 "fields": {
   "suit": 3,
   "number": 9
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 49,
 "fields": {
   "suit": 3,
   "number": 10
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 50,
 "fields": {
   "suit": 3,
   "number": 11
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 51,
 "fields": {
   "suit": 3,
   "number": 12
 }
 },{
-"model": "portal.Card",
+"model": "game.Card",
 "pk": 52,
 "fields": {
   "suit": 3,

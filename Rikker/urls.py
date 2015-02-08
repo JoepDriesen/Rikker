@@ -17,4 +17,5 @@ urlpatterns = patterns('',
     
     url(r'', include('authentication.urls')),
     url(r'', include('portal.urls')),
+    url(r'game/', include('game.urls')),
 )

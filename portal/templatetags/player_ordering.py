@@ -23,7 +23,7 @@ def current_trick_display(game, player_looking_at_screen):
         if loop_isplaying.player == player_looking_at_screen:
             player_seat = loop_isplaying.seat
             
-    for card in game.current_round.current_trick.playedintrick_set.all():
+    for card in game.current_round.current_trick().playedintrick_set.all():
         this_guys_seat = game.isplaying_set.get(player=card.played_by).seat
         if this_guys_seat >= player_seat:
             relative_seat_number = (this_guys_seat - player_seat) + 1
