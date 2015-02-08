@@ -24,12 +24,18 @@ otherwise extremely dumb
 * Requesting cards for complicated game types (Open miserie with card, open voor alles with card, ...)
 * Open opponent cards in open game types (Open miserie, open voor alles, ...)
  
-Planned features:
+##### Planned features:
 * Implement complicated game types
 * Fix bugs
-* Finish scoring system (some games are not accurately scored)
 * Make bots smarter (machine learning project?)
 * Update portal with ajax updates
 * Show a game history on the portal
 * Show release notes on portal bottom
 * Notify players when the game is waiting for actions by other players
+
+
+### Screenshots
+
+![The Portal Screen](http://example.com/images/logo.png)
+![Choosing a trump and mate suit after winning the bidding round](http://example.com/images/logo.png)
+![Playing a trick](http://example.com/images/logo.png)

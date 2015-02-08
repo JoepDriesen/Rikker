@@ -14,7 +14,7 @@ class CardManager(models.Manager):
         suit_letter = card_identifier[0]
         suit = None
         for possible_suit in Card.SUITS:
-            if Card.SUIT_MAP[possible_suit[1]] == suit_letter:
+            if self.model.SUIT_MAP[possible_suit[1]] == suit_letter:
                 suit = possible_suit[0]
         if suit is None:
             raise Exception('Card identifier does not have a valid suit: {}'.format(card_identifier))
@@ -711,7 +711,7 @@ class PlayedInTrick(models.Model):
 class GameManager(models.Manager):
     
     def start_game(self, players):
-        game = Game()
+        game = self.model()
         game.save()
         
         seat = 0
