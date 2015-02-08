@@ -122,7 +122,6 @@
 	{% endif %}
 	
 	{% if game.current_state == g.DURING_ROUND and game.current_round.current_phase == r.TRICK_TAKING_PHASE %}
-	# TODO: adapt for games that don't have trump or mate cards
 		
 		<div id="round-trump-display" class="panel panel-primary">
 			<div class="panel-heading">
@@ -302,7 +301,6 @@
 			<div class="modal-dialog">
 		    	<div class="modal-content">
 		      		<div class="modal-header">
-		        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		        		<h4 class="modal-title">You won the bidding round!</h4>
 		      		</div>
 		      		
