@@ -13,7 +13,7 @@ class CardManager(models.Manager):
     def get_by_identifier(self, card_identifier):
         suit_letter = card_identifier[0]
         suit = None
-        for possible_suit in Card.SUITS:
+        for possible_suit in self.model.SUITS:
             if self.model.SUIT_MAP[possible_suit[1]] == suit_letter:
                 suit = possible_suit[0]
         if suit is None:
