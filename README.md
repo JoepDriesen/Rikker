@@ -36,6 +36,11 @@ otherwise extremely dumb
 
 ### Screenshots
 
-![The Portal Screen](http://example.com/images/logo.png)
-![Choosing a trump and mate suit after winning the bidding round](http://example.com/images/logo.png)
-![Playing a trick](http://example.com/images/logo.png)
+###### The Portal Screen
+![The Portal Screen](https://raw.githubusercontent.com/Gargamel1989/Rikker/master/prev/screen0.jpg)
+
+###### Choosing a trump and mate suit after winning the bidding round
+![Choosing a trump and mate suit after winning the bidding round](https://raw.githubusercontent.com/Gargamel1989/Rikker/master/prev/screen1.jpg)
+
+###### Playing a trick
+![Playing a trick](https://raw.githubusercontent.com/Gargamel1989/Rikker/master/prev/screen2.jpg)
