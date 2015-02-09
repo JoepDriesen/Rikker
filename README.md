@@ -1,7 +1,7 @@
 Rikker
 ======
 
-An online application allowing people to play the trick taking card game 'Rikken' against each other online.
+An online application allowing people to play the trick taking card game 'Rikken' against each other online. I made this for me and my friends so we could play our favourite game together while we were all living in different places.
 
 ##### Play the game
 You can play a current version of the game at [http://gargamel1989.pythonanywhere.com/](http://gargamel1989.pythonanywhere.com/)
