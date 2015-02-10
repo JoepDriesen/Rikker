@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.http.response import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from game.models import IsPlaying, Game, Round, Card, Trick, GameException
+from game.models import IsPlaying, Game, Round, Card, Trick, GameException, Bid
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
@@ -106,7 +106,7 @@ def pick_trump_and_mate(request, game_id):
                 
                 try:
                     game.current_round.finalize_bid(request.user, trump, mate)
-                except Round.BadBidException as e:
+                except (Round.BadBidException, Bid.IllegalChoiceException) as e:
                     messages.add_message(request, messages.WARNING, e.message)
             else:
                 messages.add_message(request, messages.WARNING, trump_and_mate_form.errors)
@@ -188,6 +188,6 @@ def get_update(request):
         isplaying.save()
         
         json_data = json.dumps({'update': True})
-        return HttpResponse(json_data, mimetype='application/json')
+        return HttpResponse(json_data, content_type='application/json')
     
-    return HttpResponse(json.dumps({'update': False}), mimetype='application/json')
+    return HttpResponse(json.dumps({'update': False}), content_type='application/json')

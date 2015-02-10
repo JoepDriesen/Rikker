@@ -195,7 +195,7 @@ class Bid(models.Model):
                                 if len(filter(lambda card: (card.number == mate_cardnumber and card.suit != trump_suit), asking_hand)) < 3:
                                     # The player has the option of picking another mate suit, it follows that this mate suit is an illegal
                                     # choice
-                                    raise self.BadBidException('You must pick another mate suit. You have the highest card of the chosen mate suit and there are other options.')
+                                    raise self.IllegalChoiceException('You must pick another mate suit. You have the highest card of the chosen mate suit and there are other options.')
                                 # The player has all other cards of this number, so it would still appear this is an ok suit to pick, we must
                                 # go deeper
                                 mate_cardnumber -= 1
@@ -648,6 +648,14 @@ class Trick(models.Model):
                 # Check if the player does not have any cards of the requested suit left
                 if IsPlaying.objects.get(game=self.round.game, player=player).cards.filter(suit=self.requested_suit).exists():
                     raise self.BadPlayException("You must follow suit if possible.")
+            else:
+                if player == self.round.mate:
+                    # This is the mate playing
+                    if self.leading_player == self.round.highest_bid.player and self.requested_suit == self.round.highest_bid.mate_suit:
+                        # The leading player has requested the mate card
+                        if card.number != self.round.highest_bid.mate_card:
+                            # Mate must play the mate card
+                            raise self.BadPlayException("You must play the mate card if requested by the leading player.")
             
             PlayedInTrick(card=card, trick=self, ordinal=ordinal, played_by=player).save()
             CardInHand.objects.get(isplaying__game=self.round.game, isplaying__player=player, card=card).delete()
@@ -771,6 +779,14 @@ class Game(models.Model):
     
     def __unicode__(self):
         return 'Game #%s' % self.pk
+    
+    def has_ended(self):
+        return self.isplaying_set.filter(abandoned=True).exists()
+    
+    def leavers(self):
+        if self.has_ended():
+            return self.isplaying_set.filter(abandoned=True)
+        return None
     
     def current_state(self):
         """
@@ -1021,6 +1037,7 @@ class IsPlaying(models.Model):
     def abandon(self):
         self.abandoned = True
         self.save()
+        self.game.changed()
     
     def last_bid(self):
         for bid in self.game.current_round.all_bids():

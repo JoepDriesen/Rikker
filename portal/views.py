@@ -21,7 +21,7 @@ def portal(request):
             invitations.append(isplaying.game)
         elif not isplaying.game.deck_initialized:
             pending_games.append(isplaying.game)
-        else:
+        elif not isplaying.game.has_ended():
             games.append(isplaying.game)
     
     return render(request, 'portal/portal.html', {'start_game_form': start_game_form,
