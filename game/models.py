@@ -35,6 +35,7 @@ class Card(models.Model):
     
     class Meta:
         unique_together = (("number", "suit"), )
+        ordering = ('suit', 'number')
         
     @classmethod
     def get_card_number_display(cls, card_number):

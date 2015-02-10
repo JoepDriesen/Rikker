@@ -170,8 +170,14 @@ html, body {
 	text-align: center;
 }
 
+#playground .modal#picking-form option {
+	color: #333;
+}
+
 #playground .modal#picking-form option[value="1"],
-#playground .modal#picking-form option[value="2"] {
+#playground .modal#picking-form option[value="2"], 
+#playground .modal#picking-form .suit-1,
+#playground .modal#picking-form .suit-2 {
 	color: #d9534f;
 }
 
