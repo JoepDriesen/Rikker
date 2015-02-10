@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from portal import bidding_needed, playing_needed, collection_needed
 import threading
+from django.conf import settings
 
 global_lock = threading.RLock()
 
@@ -79,7 +80,7 @@ class Bid(models.Model):
     bid_lock = global_lock
     
     round = models.ForeignKey('Round', related_name='bids')
-    player = models.ForeignKey(get_user_model())
+    player = models.ForeignKey(settings.AUTH_USER_MODEL)
     
     bid = models.PositiveSmallIntegerField(choices=BIDS, default=PASS)
     
@@ -231,13 +232,13 @@ class Round(models.Model):
     
     game = models.ForeignKey('Game', related_name='rounds')
     
-    dealer = models.ForeignKey(get_user_model(), related_name='games_dealing')
+    dealer = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='games_dealing')
     
     highest_bid = models.ForeignKey(Bid, null=True, blank=True, related_name='highest_for_round')
     
     playing = models.BooleanField(blank=True, default=False)
     
-    mate = models.ForeignKey(get_user_model(), null=True, blank=True, related_name='mate_in_games')
+    mate = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='mate_in_games')
     
     
     def __unicode__(self):
@@ -549,7 +550,7 @@ class Score(models.Model):
     
     """
     round = models.ForeignKey(Round, related_name='scores')
-    player = models.ForeignKey(get_user_model(), related_name='scores')
+    player = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='scores')
     
     score = models.IntegerField()
         
@@ -569,7 +570,7 @@ class Trick(models.Model):
     
     cards = models.ManyToManyField(Card, through='PlayedInTrick')
     
-    leading_player = models.ForeignKey(get_user_model())
+    leading_player = models.ForeignKey(settings.AUTH_USER_MODEL)
     requested_suit = models.PositiveSmallIntegerField(choices=Card.SUITS, default=None, blank=True, null=True)
     
     collected = models.BooleanField(default=False)
@@ -702,7 +703,7 @@ class PlayedInTrick(models.Model):
     trick = models.ForeignKey(Trick)
     
     ordinal = models.PositiveSmallIntegerField()
-    played_by = models.ForeignKey(get_user_model())
+    played_by = models.ForeignKey(settings.AUTH_USER_MODEL)
     
     def __unicode__(self):
         return '%s playing in trick %s by %s' % (self.card, self.trick.id, self.played_by)
@@ -760,7 +761,7 @@ class Game(models.Model):
     
     objects = GameManager()
     
-    players = models.ManyToManyField(get_user_model(), through='IsPlaying')
+    players = models.ManyToManyField(settings.AUTH_USER_MODEL, through='IsPlaying')
     
     deck = models.ManyToManyField(Card, through='IsInDeck')
     deck_initialized = models.BooleanField(default=False)
@@ -1000,7 +1001,7 @@ class IsPlaying(models.Model):
     class Meta:
         ordering = ['seat']
         
-    player = models.ForeignKey(get_user_model())
+    player = models.ForeignKey(settings.AUTH_USER_MODEL)
     game = models.ForeignKey(Game)
     
     seat = models.PositiveSmallIntegerField()
